@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace RentalKendaraan_115
 {
@@ -38,12 +39,24 @@ namespace RentalKendaraan_115
             services.AddDbContext<Models.Rent_KendaraanContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("Default")));
-            //services.AddDefaultIdentity<IdentityUser>()
-               // .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            //services.AddDefaultIdentity<IdentityUser>()
+            // .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+
             services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultUI().AddEntityFrameworkStores<Rent_KendaraanContext>().AddDefaultTokenProviders();
+
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("readonlypolicy", builder => builder.RequireRole("Admin", "Manager", "Kasir"));
+                options.AddPolicy("writepolicy", builder => builder.RequireRole("Admin", "Kasir"));
+                options.AddPolicy("editpolicy", builder => builder.RequireRole("Admin", "Kasir"));
+                options.AddPolicy("deletepolicy", builder => builder.RequireRole("Admin", "Kasir"));
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
